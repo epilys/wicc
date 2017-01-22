@@ -1,0 +1,82 @@
+				wicc
+	
+INTRODUCTION
+
+'wicc' is a python3 script for the configuration of wireless interfaces on
+OpenBSD. It can be used as a standalone tool or in other scripts (e.g. a 
+daemonized network manager daemon or in rc.local)
+
+`wicc` stands for wireless interface cli configuration
+
+USAGE
+
+	wicc [-h] [-v] [-s] [-a] [-c CONNECT] [-d] [-l] [-nwid NWID]
+            [-wpakey WPAKEY] [-bssid BSSID]
+
+With no supplied arguments wicc will display current wireless connection.
+
+optional arguments:
+  -h, --help            show help message and exit
+  -v, --verbose         print messages (default)
+  -s, --silent          do not print any messages
+  -a, --auto            auto connect to saved available networks
+  -c CONNECT, --connect CONNECT
+                        connect to specific saved network/nwid
+  -d, --disconnect      disconnect interface
+  -l, --list            list available networks
+  -nwid NWID            nwid to connect to
+  -wpakey WPAKEY        wpakey to use
+  -bssid BSSID          bssid to use
+
+CONFIGURATION
+
+The configuration file resides in the users home folder (~/wicc.conf). On the
+first time it's executed, wicc generates an example config at that location.
+You will have to edit it in order for wicc to know things like your interface,
+dhclient settings and others. The conf file is formatted with JSON.
+
+	user ~ % wicc
+	Example config generated at /home/user/wicc.conf
+	user ~ %
+
+The configuration settings can be:
+
+	`interface`: the wireless interface name
+
+	`dhclient.conf`: the name of the default dhclient configuration to use 
+	(optional). This is useful if you need to have interface specific dhclient
+	settings. See network configuration for AP specific dhclient settings.
+
+	`doas`: set to null if you do not want to use doas and set to 'doas' or
+	any 'doas'-like binary that prefixes your ifconfig/dhclient commands. You
+	must configure doas to use with ifconfig and dhclient (man doas)
+
+	`ifconfig`: set to the ifconfig binary location
+
+	`network`: a dictionary of saved APs
+
+Saved network connections are stored as follows:
+
+	"network name": {
+		"autoconnect": true, //true or false, if absent default is false
+		"nwid": "nwid name", //as it is displayed in `ifconfig INTERFACE scan`
+		"wpakey": "wpakey",	// if absent no wpakey will be used
+		"dhclient.conf": false 
+	}
+		
+	`autoconnect` (Optional) (Default: false): set to `true` if you want to use 
+	the network in autoconnect mode (`wicc -a`).
+
+	`nwid` (Required): the nwid string.
+
+	`wpakey` (Optional): the wpakey required for the specified AP.
+
+	`dhclient.conf` (Optional) (Default: true):  false if connection uses system
+	default configuration, true if connection uses wicc default configuration, 
+	and a string to a dhclient conf file if you wish to specify a file.
+
+	`bssid` (Optional): the bssid of the AP.
+
+EXIT STATUS
+
+The wicc utility exits 0 on successful connection, and 1 if an error occurs.
