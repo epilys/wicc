@@ -52,7 +52,7 @@ if Path(conf_file).is_file() is False:
     conf['dhclient.conf'] = ''
     conf['ifconfig'] = 'ifconfig'
     conf['doas'] = 'doas'
-    conf['wpa_supplicant'] = '/etc/wpa_supplicant.conf'
+    conf['wpa_supplicant.conf'] = '/etc/wpa_supplicant.conf'
     with open(conf_file, 'w') as data_file:
             json.dump(conf,data_file,indent='\t',sort_keys=True)
     print('Example config generated at '+conf_file)
@@ -307,7 +307,7 @@ def connect(network=None, nwid=None, wpakey=None, auto=False,bssid=None):
     output = subprocess.check_output(args=command, universal_newlines=True,stderr=subprocess.STDOUT).rstrip()
     if '802.1x' in avail_ap[nwid][0]['options']:
         if nwid in conf['networks'] and 'wpa_supplicant' in conf['networks'][nwid] and conf['networks'][nwid]['wpa_supplicant']:
-            command = ['wpa_supplicant','-Bc',conf['wpa_supplicant'],'-D','openbsd','-i',interface,]
+            command = ['wpa_supplicant','-Bc',conf['wpa_supplicant.conf'],'-D','openbsd','-i',interface,]
             if doas:
                 command.insert(0,doas)
             if args.verbose:
